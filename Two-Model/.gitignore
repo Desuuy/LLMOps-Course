@@ -1,0 +1,9 @@
+# Api Key
+api_key.txt
+
+# Docs
+Docs/
+Docs/**
+Docs/run_code
+Docs/huggingface_token
+Docs/api_key.txt
