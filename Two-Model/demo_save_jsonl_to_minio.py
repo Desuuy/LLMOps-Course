@@ -4,6 +4,7 @@ import os
 from typing import Iterable
 
 from datasets import load_dataset
+from datasets.exceptions import DatasetNotFoundError
 from minio import Minio
 from minio.error import S3Error
 
@@ -14,6 +15,9 @@ MINIO_SECRET_KEY = os.environ.get("MINIO_SECRET_KEY", "minioadmin123")
 MINIO_BUCKET = os.environ.get("MINIO_BUCKET", "xlam-data")
 MINIO_OBJECT_NAME = os.environ.get("MINIO_OBJECT_NAME", "xlam-function-calling-60k-sample.jsonl")
 
+HF_DATASET_ID = os.environ.get("HF_DATASET_ID", "Salesforce/xlam-function-calling-60k")
+HF_SPLIT = os.environ.get("HF_SPLIT", "train[:100]")
+
 
 def iter_to_jsonl_bytes(examples: Iterable[dict]) -> bytes:
     buffer = io.StringIO()
@@ -23,8 +27,17 @@ def iter_to_jsonl_bytes(examples: Iterable[dict]) -> bytes:
 
 
 def main() -> None:
-    print("Loading dataset 'Salesforce/xlam-function-calling-60k' (train split, first 100 rows)...")
-    ds = load_dataset("Salesforce/xlam-function-calling-60k", split="train[:100]")
+    print(f"Loading dataset '{HF_DATASET_ID}' (split: {HF_SPLIT}) ...")
+    try:
+        ds = load_dataset(HF_DATASET_ID, split=HF_SPLIT)
+    except DatasetNotFoundError as exc:
+        print(f"Failed to load '{HF_DATASET_ID}': {exc}")
+        print("This is often caused by a gated/private dataset that requires Hugging Face authentication + access approval.")
+        print("Falling back to a public dataset so the MinIO upload demo can still run.")
+        HF_DATASET_ID_FALLBACK = "ag_news"
+        HF_SPLIT_FALLBACK = "train[:100]"
+        print(f"Loading fallback dataset '{HF_DATASET_ID_FALLBACK}' (split: {HF_SPLIT_FALLBACK}) ...")
+        ds = load_dataset(HF_DATASET_ID_FALLBACK, split=HF_SPLIT_FALLBACK)
 
     print("Converting to JSONL in memory...")
     data_bytes = iter_to_jsonl_bytes(ds)
