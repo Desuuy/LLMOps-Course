@@ -1,0 +1,76 @@
+networks:
+  llmtutorial:
+    driver: bridge
+
+volumes:
+  minio_tutorial_data:
+  mlflow_tutorial_data:
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: tutorial_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    ports:
+      - "9100:9000"
+      - "9101:9001"
+    volumes:
+      - minio_tutorial_data:/data
+    networks:
+      - llmtutorial
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: tutorial_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET:-models}
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
+        mc mb --ignore-existing local/$$MINIO_BUCKET &&
+        mc anonymous set none local/$$MINIO_BUCKET &&
+        echo 'Bucket ready: '$$MINIO_BUCKET
+      "
+    networks:
+      - llmtutorial
+    restart: "no"
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.11.3
+    container_name: tutorial_mlflow
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      MLFLOW_S3_ENDPOINT_URL: ${MLFLOW_S3_ENDPOINT_URL:-http://minio:9000}
+      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY}
+      AWS_DEFAULT_REGION: us-east-1
+    command: >
+      sh -c "pip install boto3 && mlflow server
+      --backend-store-uri sqlite:////mlflow/mlflow.db
+      --default-artifact-root s3://${MINIO_BUCKET:-models}/mlflow
+      --serve-artifacts
+      --host 0.0.0.0"
+    volumes:
+      - mlflow_tutorial_data:/mlflow
+    networks:
+      - llmtutorial
+    depends_on:
+      minio:
+        condition: service_healthy
