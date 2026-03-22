@@ -1,0 +1,68 @@
+groups:
+  - name: sglang_alerts
+    rules:
+      - alert: SGLangDown
+        expr: up{job="sglang"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "SGLang inference server is down"
+          description: "SGLang has been unreachable for more than 1 minute."
+
+      - alert: HighQueuedRequests
+        expr: sglang_queue_size > 50
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "SGLang request queue is large"
+          description: "Queue size {{ $value }} exceeds threshold."
+
+  - name: gpu_alerts
+    rules:
+      - alert: GPUHighMemoryUsage
+        expr: DCGM_FI_DEV_FB_USED / DCGM_FI_DEV_FB_TOTAL > 0.95
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GPU memory usage > 95%"
+          description: "GPU {{ $labels.gpu }} memory is at {{ $value | humanizePercentage }}."
+
+      - alert: GPUHighTemperature
+        expr: DCGM_FI_DEV_GPU_TEMP > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GPU temperature too high"
+          description: "GPU {{ $labels.gpu }} temperature is {{ $value }}°C."
+
+  - name: redis_alerts
+    rules:
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+
+      - alert: RedisHighMemory
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis memory usage > 90%"
+
+  - name: litellm_alerts
+    rules:
+      - alert: LiteLLMDown
+        expr: up{job="litellm"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "LiteLLM proxy is down"

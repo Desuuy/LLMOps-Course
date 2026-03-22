@@ -1,0 +1,54 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: llm-serving
+    env: local
+
+rule_files:
+  - /etc/prometheus/alert_rules.yml
+
+scrape_configs:
+  # ── SGLang inference metrics ───────────────────────────────────────────────
+  - job_name: sglang
+    static_configs:
+      - targets: ["sglang:30002"]
+    metrics_path: /metrics
+    scrape_interval: 10s
+
+  # ── vLLM inference metrics ────────────────────────────────────────────────
+  - job_name: "vllm-service"
+    static_configs:
+      - targets: ["vllm:30003"]
+    metrics_path: /metrics
+    scrape_interval: 10s
+
+  # ── LiteLLM proxy metrics ──────────────────────────────────────────────────
+  - job_name: litellm
+    static_configs:
+      - targets: ["litellm:4001"]
+    metrics_path: /metrics
+    scrape_interval: 10s
+
+  # ── Redis metrics (via redis-exporter) ────────────────────────────────────
+  - job_name: redis
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+    scrape_interval: 15s
+
+  # ── GPU metrics (via DCGM exporter) ──────────────────────────────────────
+  - job_name: gpu
+    static_configs:
+      - targets: ["dcgm-exporter:9400"]
+    scrape_interval: 10s
+
+  # ── Node / host metrics (CPU, RAM, disk, network) ─────────────────────────
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]
+    scrape_interval: 15s
+
+  # ── Prometheus self-monitoring ────────────────────────────────────────────
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

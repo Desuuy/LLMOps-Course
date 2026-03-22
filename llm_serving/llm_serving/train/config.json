@@ -1,0 +1,27 @@
+{
+    "model_name": "/mnt/oldssd/home/pc/Documents/cole_labs/models/gemma-3-1b-it",
+    "max_seq_length": 2048,
+    "eval_seed": 42,
+    "eval_samples": 100,
+    "train_samples": 10000,
+    "output_dir": "outputs",
+    "save_dir": "gemma_1b_tool_call_lora",
+    "log_dir": "outputs",
+  
+    "per_device_train_batch_size": 1,
+    "gradient_accumulation_steps": 1,
+    "num_train_epochs": 1,
+    "learning_rate": 2e-4,
+    "weight_decay": 0.001,
+    "warmup_steps": 5,
+    "max_steps": 5,
+  
+    "eval_show_samples": 10,
+  
+    "use_wandb": false,
+    "use_mlflow": true,
+  
+    "push_to_hf": false,
+    "push_to_minio": false
+  }
+  

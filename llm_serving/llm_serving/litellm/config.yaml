@@ -1,0 +1,57 @@
+# ==============================================================
+#  LiteLLM Config — llm_serving stack (port 4001)
+#  NOTE: Do NOT use ${VAR} here — LiteLLM YAML parser does not
+#  expand shell variables. Pass secrets via environment vars in
+#  docker-compose.yml instead (LITELLM_MASTER_KEY, DATABASE_URL, etc.)
+# ==============================================================
+
+model_list:
+  # ── Gemma-3 1B Finetuned via SGLang ──────────────────────────────────────
+  - model_name: gemma-1b-finetune
+    litellm_params:
+      model: openai/gemma-1b-finetune
+      api_base: http://sglang:30002/v1
+      api_key: "none"
+      timeout: 120
+      stream_timeout: 300
+
+  # ── Shorthand alias → SGLang ──────────────────────────────────────────────
+  - model_name: gemma
+    litellm_params:
+      model: openai/gemma-1b-finetune
+      api_base: http://sglang:30002/v1
+      api_key: "none"
+
+  # ── Gemma-3 1B via vLLM ──────────────────────────────────────────────────
+  - model_name: gemma-vllm
+    litellm_params:
+      model: openai/gemma-1b-finetune
+      api_base: http://vllm:30003/v1
+      api_key: "none"
+      timeout: 120
+      stream_timeout: 300
+
+litellm_settings:
+  # ── Redis cache (credentials injected via env in docker-compose) ──────────
+  cache: true
+  cache_params:
+    type: redis
+    host: redis
+    port: 6379
+    # password set via REDIS_PASSWORD env var — read from process env at runtime
+    ttl: 600
+
+  # ── Observability ─────────────────────────────────────────────────────────
+  success_callback: ["prometheus"]
+  failure_callback: ["prometheus"]
+
+  # ── Safety & retries ──────────────────────────────────────────────────────
+  request_timeout: 300
+  num_retries: 2
+  drop_params: true
+
+general_settings:
+  # master_key is passed via LITELLM_MASTER_KEY env var (docker-compose)
+  # database_url is passed via DATABASE_URL env var (docker-compose)
+  store_model_in_db: true
+  ui_access_mode: "all"

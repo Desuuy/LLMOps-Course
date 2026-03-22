@@ -1,0 +1,2 @@
+>>> Headless smoke test — 10 users, 1 min
+tests/run_stress_test.sh: line 39: locust: command not found

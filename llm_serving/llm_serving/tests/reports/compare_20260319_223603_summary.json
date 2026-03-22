@@ -1,0 +1,27 @@
+{
+  "sglang": {
+    "requests_measured": 405,
+    "e2e_p50_ms": 3.0,
+    "e2e_p95_ms": 301.0,
+    "e2e_p99_ms": 1263.0,
+    "e2e_max_ms": 3297.0,
+    "timestamp": "20260319_223603"
+  },
+  "vllm": {
+    "requests_measured": 419,
+    "e2e_p50_ms": 3.0,
+    "e2e_p95_ms": 148.0,
+    "e2e_p99_ms": 806.0,
+    "e2e_max_ms": 2190.0,
+    "timestamp": "20260319_223603"
+  },
+  "gpu_before": {
+    "sglang_scheduler_mib": 6034,
+    "vllm_enginecore_mib": 8528
+  },
+  "gpu_after": {
+    "sglang_scheduler_mib": 6034,
+    "vllm_enginecore_mib": 8528
+  },
+  "run_prefix": "/mnt/oldssd/home/pc/Documents/cole_labs/llm_serving/tests/reports/compare_20260319_223603"
+}

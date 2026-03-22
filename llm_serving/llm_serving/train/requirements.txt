@@ -1,0 +1,20 @@
+torch>=2.6.0
+torchvision
+torchaudio
+unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
+unsloth_zoo
+transformers
+trl
+peft
+accelerate
+bitsandbytes
+datasets
+huggingface_hub
+sentencepiece
+protobuf
+python-dotenv
+minio
+mlflow
+boto3
+pydantic
+#python 3.10
