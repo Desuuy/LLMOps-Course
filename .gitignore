@@ -1,0 +1,30 @@
+# Api Key
+api_key.txt
+
+# Docs
+Docs/
+Docs/**
+Docs/run_code
+Docs/huggingface_token
+Docs/api_key.txt
+
+# Môi trường ảo Python
+venv/
+.venv/
+env/
+.env_folder/
+
+# Biến môi trường
+.env
+.env.*
+
+# Các file rác của macOS
+__MACOSX/
+_MACOSX/
+.DS_Store
+
+# Các file rác của Python (cache)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
