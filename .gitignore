@@ -28,3 +28,9 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Bỏ qua các file dataset dạng jsonl
+*.jsonl
+
+# Bỏ qua các file log
+*.log
