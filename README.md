@@ -1,42 +1,26 @@
 # LLMOps
 
-Repo này chứa các bài thực hành LLMOps (Docker, dữ liệu, model demo).
+A simple repository for LLMOps practice projects: data pipelines, local object storage demos, and training tutorial code.
 
-## Cấu trúc chính
+## Repository Structure
 
-- `Two-Model/`: demo lưu dữ liệu JSONL lên MinIO bằng Python.
-- `Lesson 2_Model/`: bản bài học tương tự theo từng bước.
-- `llm_training_tutorial/`: mã nguồn liên quan tới train model.
+- `Two-Model/` - MinIO + Python demo to save dataset samples as JSONL.
+- `Lesson 2_Model/` - lesson-based version of the MinIO workflow.
+- `llm_training_tutorial/` - model training tutorial code and scripts.
 
-## Yêu cầu
+## Requirements
 
-- Python 3.9+ (khuyên dùng 3.10)
-- Docker Desktop (Windows/macOS) hoặc Docker Engine (Linux)
+- Python 3.9+ (Python 3.10 recommended)
+- Docker Desktop (Windows/macOS) or Docker Engine (Linux)
 
-## Chạy nhanh demo MinIO (Two-Model)
 
-Mở PowerShell:
+## Notes
 
-```powershell
-cd "C:\Users\anhhu\Downloads\LLMOps\Two-Model"
-pip install -r requirements.txt
-docker compose up -d
-python demo_save_jsonl_to_minio.py
-```
+- If a Hugging Face dataset is gated, access may be required.  
+  The current demo script can fall back to a public dataset so the upload flow still works.
+- Do not commit API keys or tokens. Use environment variables and `.gitignore`.
 
-Sau khi chạy xong:
-
-- MinIO Console: `http://localhost:9001`
-- User: `minioadmin`
-- Password: `minioadmin123`
-- Bucket mặc định: `xlam-data`
-
-## Ghi chú
-
-- Nếu dataset Hugging Face bị gated, script sẽ fallback sang dataset public để demo vẫn chạy.
-- Không commit token/API key vào git. Dùng `.gitignore` và biến môi trường.
-
-## Dừng dịch vụ
+## Stop Services
 
 ```powershell
 cd "C:\Users\anhhu\Downloads\LLMOps\Two-Model"
