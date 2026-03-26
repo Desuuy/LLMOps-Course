@@ -23,6 +23,6 @@ A simple repository for LLMOps practice projects: data pipelines, local object s
 ## Stop Services
 
 ```powershell
-cd "C:\Users\anhhu\Downloads\LLMOps\Two-Model"
+cd "~\LLMOps\Two-Model"
 docker compose down
 ```
